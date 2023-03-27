@@ -2,7 +2,9 @@ import { db } from '../database/database.js'
 
 export async function createOrder(req, res) {
 
-    const { clientId, cakeId, quantity, totalPrice } = res.locals.orders
+    const { clientId, cakeId, quantity, price } = res.locals.orders
+
+    const totalPrice = price*quantity
 
     try {
 

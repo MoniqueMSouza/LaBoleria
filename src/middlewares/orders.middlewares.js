@@ -19,8 +19,14 @@ export async function validSchemaOrders(req, res, next) {
         const errors = error.details.map((detail) => detail.message)
         return res.status(400).send({ errors })
     }
+
+    const consultPrice = await db.query(`SELECT price FROM cakes WHERE id = $1`, [
+        orders.cakeId,
+      ]);
+
+      const price = consultPrice.rows[0].price;
      
-    res.locals.orders = orders
+    res.locals.orders = { ...orders, price}
 
     next()
 }
