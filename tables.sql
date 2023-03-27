@@ -18,7 +18,7 @@ CREATE TABLE orders (
 	"clientId" integer NOT NULL REFERENCES "clients"("id"),
 	"cakeId" integer NOT NULL REFERENCES "cakes"("id"),
 	"quantity" integer NOT NULL,
-	"totalprice" numeric NOT NULL,
+	"totalPrice" numeric NOT NULL,
 	"createdAt" timestamp without time zone DEFAULT now() NOT NULL
 );
 
@@ -55,7 +55,7 @@ CREATE TABLE "public.orders" (
 	"clientId" integer NOT NULL,
 	"cakeId" integer NOT NULL,
 	"quantity" integer NOT NULL,
-	"totalprice" numeric NOT NULL,
+	"totalPrice" numeric NOT NULL,
 	"createdAt" TIMESTAMP NOT NULL,
 	CONSTRAINT "orders_pk" PRIMARY KEY ("id")
 ) WITH (
