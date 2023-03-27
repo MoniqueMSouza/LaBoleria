@@ -41,34 +41,74 @@ export async function getOrders(req, res) {
             JOIN clients on orders."clientId" = clients.id where "createdAt"::date = $1`, [date])
         }
 
-const resposta = infos.rows.map((row) => ({
-    client: {
-      id: row.clientId,
-      name: row.client_name,
-      address: row.address,
-      phone: row.phone,
-    },
-    cake: {
-      id: row.cakeId,
-      name: row.cake_name,
-      price: row.price,
-      description: row.description,
-      image: row.image,
-    },
-    orderId: row.id_order,
-    createdAt: row.createdAt,
-    quantity: row.quantity,
-    totalPrice: row.totalPrice,
-  }));
+        if (infos.rowCount == 0) return res.sendStatus(404) 
 
-
-       
-
+        const resposta = infos.rows.map((row) => ({
+            client: {
+                id: row.clientId,
+                name: row.client_name,
+                address: row.address,
+                phone: row.phone,
+            },
+            cake: {
+                id: row.cakeId,
+                name: row.cake_name,
+                price: row.price,
+                description: row.description,
+                image: row.image,
+            },
+            orderId: row.id_order,
+            createdAt: row.createdAt,
+            quantity: row.quantity,
+            totalPrice: row.totalPrice,
+        }));
 
         res.status(200).send(resposta)
     } catch (err) {
         res.status(500).send(err.message)
 
     }
+
+}
+
+export async function getById(req, res) {
+try{
+    const orderId = Number(req.params.id);
+
+    const infos = await db.query(`SELECT orders.*, cakes.*, clients.*,
+    orders.id AS id_order,orders."createdAt" AS created_at, cakes.id AS id_cake, clients.id AS id_clients, cakes.name AS cake_name, clients.name AS client_name 
+    FROM orders
+    JOIN cakes on orders."cakeId" = cakes.id
+    JOIN clients on orders."clientId" = clients.id
+    WHERE orders.id=$1`,[orderId])
+
+    if (infos.rowCount == 0) return res.sendStatus(404) 
+
+     const resposta = infos.rows.map((row) => ({
+        client: {
+          id: row.clientId,
+          name: row.client_name,
+          address: row.address,
+          phone: row.phone,
+        },
+        cake: {
+          id: row.cakeId,
+          name: row.cake_name,
+          price: row.price,
+          description: row.description,
+          image: row.image,
+        },
+        orderId: row.id_order,
+        createdAt: row.created_at,
+        quantity: row.quantity,
+        totalPrice: row.totalPrice,
+      }));
+
+    
+    res.status(200).send(resposta);
+}catch(err){
+    console.log(err);
+    res.status(500).send(err.message);
+}
 
 }
